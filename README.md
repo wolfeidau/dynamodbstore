@@ -11,19 +11,23 @@ go get -u github.com/wolfeidau/dynamodbstore
 # Usage
 
 ```go
+    // you may want to configure this centrally in your application
     sess := session.Must(session.NewSession())
 
     ddb := dynamodb.New(sess)
 
-    store, err = NewDynamodbStore(ddb, []byte("secret-key"))
+    // secret-key should be generated
+    secretKey := "secret-key-should-be-in-config"
+    
+    store, err := dynamodbstore.NewDynamodbStore(ddb, []byte(secretKey))
 	if err != nil {
-		t.Fatal(err.Error())
+		log.Fatal(err)
 	}
 
     // Get a session.
     session, err = store.Get(req, "session-key")
     if err != nil {
-        log.Error(err.Error())
+        log.Error(err)
     }
 
     // Add a value.
@@ -31,13 +35,13 @@ go get -u github.com/wolfeidau/dynamodbstore
 
     // Save.
     if err = sessions.Save(req, rsp); err != nil {
-        t.Fatalf("Error saving session: %v", err)
+        log.Fatalf("Error saving session: %v", err)
     }
 
     // Delete session.
     session.Options.MaxAge = -1
     if err = sessions.Save(req, rsp); err != nil {
-        t.Fatalf("Error saving session: %v", err)
+        log.Fatalf("Error saving session: %v", err)
     }
 ```
 
